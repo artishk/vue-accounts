@@ -18,7 +18,12 @@
               </b-card-text>
 
               <div>
-                <b-button class="edit" variant="primary">Edit </b-button>
+                <b-button
+                  class="edit"
+                  variant="primary"
+                  @click="$emit('edit-acc', acc.ID)"
+                  >Edit
+                </b-button>
                 <div class="divider" />
                 <b-button
                   type="submit"
@@ -37,7 +42,7 @@
 </template>
 
 <script>
-import listItem from "../views/listItem";
+import listItem from "./listItem";
 
 export default {
   name: "Card",

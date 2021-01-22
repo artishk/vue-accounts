@@ -9,6 +9,7 @@
           required
         ></b-form-input>
       </b-form-group>
+
       <b-form-group
         id="input-group-2"
         label="Your BankName:"
@@ -20,19 +21,18 @@
           placeholder="Enter Bankname"
           required
         ></b-form-input>
-      </b-form-group>
-
-      <b-form-group
-        id="input-group-2"
-        label="Your AccountNumber:"
-        label-for="input-2"
-      >
-        <b-form-input
-          id="input-2"
-          v-model="form.accountNumber"
-          placeholder="Enter AccountNumber"
-          required
-        ></b-form-input>
+        <b-form-group
+          id="input-group-2"
+          label="Your AccountNumber:"
+          label-for="input-2"
+        >
+          <b-form-input
+            id="input-2"
+            v-model="form.accountNumber"
+            placeholder="Enter AccountNumber"
+            required
+          ></b-form-input>
+        </b-form-group>
       </b-form-group>
       <b-form-group id="input-group-2" label="IFSC code:" label-for="input-2">
         <b-form-input
@@ -122,7 +122,7 @@
         </b-card>
       </div>
 
-      <b-button @click="addacc" type="submit" variant="primary"
+      <b-button @click="updateAcct" type="submit" variant="primary"
         >Submit</b-button
       >
     </b-form>
@@ -133,38 +133,23 @@
 </template>
 
 <script>
-import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import router from "../router";
 
 export default {
-  name: "addNewAccount",
-  props: [],
+  name: "editAccount",
 
   data() {
     return {
-      form: {
-        owner: "",
-        bankName: "",
-        accountNumber: "",
-        balance: "",
-
-        Address: {
-          street: "",
-          city: "",
-          state: "",
-          pincode: "",
-        },
-        ID: uuidv4(),
-      },
+      form: {},
     };
   },
-
   methods: {
-    addacc() {
+    updateAcct() {
+      const userId = this.$route.params.id;
       axios({
         method: "post",
-        url: "http://localhost:9191/createNewAccount",
+        url: "http://localhost:9191/updateAccountByID/" + userId,
         data: this.form,
         headers: { "Content-Type": "application/json" },
       })
@@ -176,19 +161,17 @@ export default {
           console.log(error);
         });
     },
+  },
 
-    onReset(event) {
-      event.preventDefault();
-      // Reset our form values
-      this.form.owner = "";
-      this.form.bankName = "";
-
-      // Trick to reset/clear native browser form validation state
-      this.show = false;
-      this.$nextTick(() => {
-        this.show = true;
-      });
-    },
+  mounted() {
+    const userId = this.$route.params.id;
+    axios
+      .get("http://localhost:9191/getAccountByID/" + userId)
+      .then((response) => {
+        console.log(response.data);
+        this.form = response.data;
+      })
+      .catch((err) => console.log(err));
   },
 };
 </script>
